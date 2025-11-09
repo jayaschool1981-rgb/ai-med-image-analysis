@@ -1,8 +1,0 @@
-[tool.poetry]
-name = "render-fake"
-version = "0.1.0"
-description = ""
-authors = ["none"]
-
-[tool.poetry.dependencies]
-python = ">=3.10.0,<3.11"
