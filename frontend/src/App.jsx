@@ -12,36 +12,45 @@ export default function App() {
       <div id="result" style="margin-top: 16px;"></div>
     </div>
   `
+
   setTimeout(() => {
-    const btn = document.getElementById('btn')
-    const fileEl = document.getElementById('file')
-    const gradEl = document.getElementById('gradcam')
-    const status = document.getElementById('status')
-    const result = document.getElementById('result')
-    const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000') + '/predict'
+    const btn = document.getElementById("btn")
+    const fileEl = document.getElementById("file")
+    const gradEl = document.getElementById("gradcam")
+    const status = document.getElementById("status")
+    const result = document.getElementById("result")
+
+    const API_URL = import.meta.env.VITE_API_URL + "/predict"
 
     btn.onclick = async () => {
-      if (!fileEl.files?.[0]) { alert('Choose an image'); return; }
-      status.textContent = 'Uploading...'
-      result.innerHTML = ''
+      if (!fileEl.files?.[0]) return alert("Choose an image first")
+
+      status.textContent = "Uploading..."
+      result.innerHTML = ""
+
       const form = new FormData()
-      form.append('file', fileEl.files[0])
-      form.append('with_gradcam', gradEl.checked ? 'true' : 'false')
+      form.append("file", fileEl.files[0])
+      form.append("with_gradcam", gradEl.checked)
+
       try {
-        const resp = await fetch(API_URL, { method: 'POST', body: form })
+        const resp = await fetch(API_URL, { method: "POST", body: form })
         const data = await resp.json()
-        status.textContent = ''
+
+        status.textContent = ""
         const prob = (data.probability * 100).toFixed(2)
         let html = `<h3>Prediction: ${data.predicted_class} (${prob}%)</h3>`
+
         if (data.gradcam_png_base64) {
           html += `<img style="max-width: 100%; border: 1px solid #ddd" src="data:image/png;base64,${data.gradcam_png_base64}" />`
         }
+
         result.innerHTML = html
-      } catch (e) {
-        console.error(e)
-        status.textContent = 'Error calling API. Check console.'
+      } catch (err) {
+        console.error(err)
+        status.textContent = "Error calling API."
       }
     }
   })
+
   return html
 }
